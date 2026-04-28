@@ -35,6 +35,11 @@ actor DockerClient {
         return try decoder.decode([DockerContainerListEntry].self, from: body)
     }
 
+    func info() async throws -> DockerInfo {
+        let body = try await request(path: "/info")
+        return try decoder.decode(DockerInfo.self, from: body)
+    }
+
     func stats(for containerId: String) async throws -> DockerStatsResponse {
         let body = try await request(path: "/containers/\(containerId)/stats?stream=false")
         return try decoder.decode(DockerStatsResponse.self, from: body)

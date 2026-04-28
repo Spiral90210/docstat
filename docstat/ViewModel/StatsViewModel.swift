@@ -12,6 +12,7 @@ final class StatsViewModel: ObservableObject {
     @Published var sortColumn: SortColumn = .cpu
     @Published var sortAscending: Bool = false
     @Published private(set) var isRefreshing = false
+    @Published private(set) var systemMemTotal: UInt64?
 
     private let client = DockerClient()
 
@@ -56,6 +57,7 @@ final class StatsViewModel: ObservableObject {
 
         do {
             let containers = try await client.listContainers()
+            self.systemMemTotal = (try? await client.info())?.MemTotal
             if containers.isEmpty {
                 self.rows = []
                 self.status = "No running containers"
@@ -87,6 +89,7 @@ final class StatsViewModel: ObservableObject {
             self.status = nil
         } catch {
             self.rows = []
+            self.systemMemTotal = nil
             self.status = "Docker not running"
         }
     }

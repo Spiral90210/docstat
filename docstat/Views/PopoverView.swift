@@ -16,7 +16,7 @@ struct PopoverView: View {
     private var header: some View {
         HStack(alignment: .firstTextBaseline, spacing: 24) {
             stat(label: "CPU%", value: String(format: "%.1f", viewModel.totalCpuPercent))
-            stat(label: "Mem", value: formatBytes(viewModel.totalMemBytes))
+            stat(label: "Mem", value: memValue)
             stat(label: "Mem%", value: String(format: "%.1f", viewModel.totalMemPercent))
             Spacer()
             ZStack {
@@ -42,6 +42,14 @@ struct PopoverView: View {
             .alignmentGuide(.firstTextBaseline) { d in d[VerticalAlignment.center] }
         }
         .frame(height: 44)
+    }
+
+    private var memValue: String {
+        let used = formatBytes(viewModel.totalMemBytes)
+        if let total = viewModel.systemMemTotal {
+            return "\(used) / \(formatBytes(total))"
+        }
+        return used
     }
 
     private func stat(label: String, value: String) -> some View {

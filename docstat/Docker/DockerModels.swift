@@ -5,6 +5,10 @@ struct DockerContainerListEntry: Decodable {
     let Names: [String]
 }
 
+struct DockerInfo: Decodable {
+    let MemTotal: UInt64
+}
+
 struct DockerStatsResponse: Decodable {
     struct CPUStats: Decodable {
         struct CPUUsage: Decodable {
