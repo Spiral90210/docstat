@@ -11,9 +11,9 @@ final class StatsViewModel: ObservableObject {
     @Published var status: String? = "Loading..."
     @Published var sortColumn: SortColumn = .cpu
     @Published var sortAscending: Bool = false
+    @Published private(set) var isRefreshing = false
 
     private let client = DockerClient()
-    private var inFlight = false
 
     var totalCpuPercent: Double { rows.reduce(0) { $0 + $1.cpuPercent } }
     var totalMemBytes: UInt64 { rows.reduce(0) { $0 + $1.memBytes } }
@@ -50,9 +50,9 @@ final class StatsViewModel: ObservableObject {
     }
 
     func refresh() async {
-        if inFlight { return }
-        inFlight = true
-        defer { inFlight = false }
+        if isRefreshing { return }
+        isRefreshing = true
+        defer { isRefreshing = false }
 
         do {
             let containers = try await client.listContainers()

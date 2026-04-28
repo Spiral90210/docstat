@@ -19,16 +19,29 @@ struct PopoverView: View {
             stat(label: "Mem", value: formatBytes(viewModel.totalMemBytes))
             stat(label: "Mem%", value: String(format: "%.1f", viewModel.totalMemPercent))
             Spacer()
-            Button {
-                Task { await viewModel.refresh() }
-            } label: {
-                Image(systemName: "arrow.clockwise")
-                    .font(.title3)
+            ZStack {
+                Button {
+                    Task { await viewModel.refresh() }
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.title3)
+                }
+                .buttonStyle(.borderless)
+                .help("Refresh")
+                .accessibilityLabel("Refresh")
+                .opacity(viewModel.isRefreshing ? 0 : 1)
+                .disabled(viewModel.isRefreshing)
+
+                if viewModel.isRefreshing {
+                    ProgressView()
+                        .controlSize(.small)
+                        .scaleEffect(1.2)
+                }
             }
-            .buttonStyle(.borderless)
-            .help("Refresh")
-            .accessibilityLabel("Refresh")
+            .frame(width: 24, height: 24)
+            .alignmentGuide(.firstTextBaseline) { d in d[VerticalAlignment.center] }
         }
+        .frame(height: 44)
     }
 
     private func stat(label: String, value: String) -> some View {
